@@ -1,5 +1,4 @@
-# EntixOS
-the 64 bit operating system
+The entix 64-bit hobby kernel.
 
-created by ALoutFER and Michael78Bugaev
-the 64-bit kernel with own standarts.
+
+Michael78Bugaev, ALoutFER
