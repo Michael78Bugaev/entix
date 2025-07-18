@@ -60,20 +60,24 @@ void	putchar(uint8_t character, uint8_t attribute_byte)
 	}
 }
 
-void	scroll_line()
+void scroll_line()
 {
-    for (uint8_t i = 1; i < MAX_ROWS; i++) {
-        vga_memcpy((uint8_t *)(VIDEO_ADDRESS + (MAX_COLS * i * 2)),
-                   (uint8_t *)(VIDEO_ADDRESS + (MAX_COLS * (i - 1) * 2)),
-                   (MAX_COLS * 2));
+    for (uint8_t row = 1; row < MAX_ROWS; row++) {
+        for (uint8_t col = 0; col < MAX_COLS; col++) {
+            uint16_t from = (row * MAX_COLS + col) * 2;
+            uint16_t to = ((row - 1) * MAX_COLS + col) * 2;
+            uint8_t *vga = (uint8_t *)VIDEO_ADDRESS;
+            vga[to] = vga[from];
+            vga[to + 1] = vga[from + 1];
+        }
     }
-    uint16_t last_line = (MAX_ROWS - 1) * MAX_COLS * 2;
-    for (uint8_t i = 0; i < MAX_COLS; i++) {
-        write(' ', WHITE_ON_BLACK, last_line + i * 2);
-        write(0, WHITE_ON_BLACK, last_line + i * 2);
-        write(0, WHITE_ON_BLACK, last_line + i * 2 + 1);
+    uint16_t last = (MAX_ROWS - 1) * MAX_COLS * 2;
+    for (uint8_t col = 0; col < MAX_COLS; col++) {
+        uint8_t *vga = (uint8_t *)VIDEO_ADDRESS;
+        vga[last + col * 2] = ' ';
+        vga[last + col * 2 + 1] = WHITE_ON_BLACK;
     }
-    set_cursor(last_line);
+    set_cursor(last);
 }
 
 void	clear_screen()
